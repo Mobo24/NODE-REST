@@ -23,15 +23,13 @@ type jwtSigner = {
 export const register = async(req: express.Request, res: express.Response) =>{
     try{
         const {username, email, authentication: { password }} = userSchema.parse(req.body);
-        
         if(!username || !email || !password){
-            
             res.status(400).send("Invalid request body");
             return;
         }
         const existingUser = await getUserByEmail(email);
         if(existingUser){
-            res.status(400).send("User already exists");
+            res.status(200).send("User already exists");
             return;
         }
         const salt = random();
@@ -40,7 +38,6 @@ export const register = async(req: express.Request, res: express.Response) =>{
     }
     catch(error){
         res.status(400).send(error);
-
     }
 }
 
@@ -60,7 +57,7 @@ export const login = async(req: express.Request, res:express.Response) => {
         user.authentication.sessionToken = auth(salt, user._id.toString());
         await user.save();
         res.cookie("sessionToken", user.authentication.sessionToken, {domain:'localhost', path:'/'});
-        return res.status(400).send("Succesfully logged in");
+        return res.status(200).send("Succesfully logged in");
     }
     catch(error){
         res.status(400).send(error);
@@ -75,7 +72,7 @@ export const jwtTokenGeneration = async(req: express.Request, res:express.Respon
         return;
     }
     const userEmail = await getUserByEmail(email).select('-authentication.salt -authentication.password');
-    const userByUsername = await findUserByUserName(username).select('-authentication.salt -authentication.password');;
+    const userByUsername = await findUserByUserName(username).select('-authentication.salt -authentication.password');
     if (!(userEmail.equals(userByUsername))){
         res.status(400).send("Invalid username or email");
         return;

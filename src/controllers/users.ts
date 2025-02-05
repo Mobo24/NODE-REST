@@ -11,8 +11,8 @@ export const getAllUsers = async(req: express.Request, resp: express.Response) =
         console.log(error);
         resp.status(400).send("Invalid request body");
     }
-
 }
+
 export const deleteUsers = async (req: express.Request, resp: express.Response) => {
     try{
         const {id} = req.params;
@@ -20,7 +20,6 @@ export const deleteUsers = async (req: express.Request, resp: express.Response) 
         return resp.status(200).json(deletedUser);
     }
     catch(error){
-        console.log(error);
         resp.status(500).send("Internal Server Error");
     }
 }

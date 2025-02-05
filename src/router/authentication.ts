@@ -5,7 +5,7 @@ import { isAuthorized } from "../middleware";
 
 export default (router: express.Router) =>{
     router.post("/auth/register",isAuthorized, register);
-    router.post("/auth/login", login);
+    router.post("/auth/login",isAuthorized, login);
     router.post("/auth/jwt", jwtTokenGeneration);
     return router;
 };
