@@ -6,6 +6,7 @@ import compression from "compression";
 import cors from "cors";
 import mongoose from "mongoose";
 import router from "./router";
+import setRateLimit from 'express-rate-limit';
 
 require("dotenv").config()
 
@@ -20,6 +21,12 @@ app.use(cors(corsOptions));
 app.use(compression());
 app.use(cookieParser())
 app.use(bodyParser.json());
+const limiter = setRateLimit({
+            windowMs: 60 * 1000,
+            max: 3,
+            message: "Too many requests from this IP, please try again after an hour"
+        });
+app.use(limiter);
 const server = http.createServer(app);
 server.listen(8080, () => {
     console.log("Server is running on port 8080");
@@ -29,6 +36,7 @@ const MONGO_URL = process.env.MONGO_URL;
 mongoose.Promise = Promise;
 mongoose.connect(MONGO_URL);
 mongoose.connection.on("error", (error: Error) =>console.log(error));
+
 app.use('/api/v1/', router());
 
 export default app;
